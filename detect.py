@@ -84,6 +84,15 @@ def quick_compare(surf_mtx, filtered_mtx, thresh):
     else:
         return surf_mtx
     
+def black_bars(mtx):
+    for i in range(0, 10):
+        mtx[i] = np.vectorize(lambda x: 0)(mtx[:,0])
+        mtx[:,i] = np.vectorize(lambda x: 0)(mtx[:,0])
+        mtx[-i-1] = np.vectorize(lambda x: 0)(mtx[:,0])
+        mtx[:, -i-1] = np.vectorize(lambda x: 0)(mtx[:,0])
+
+    return mtx
+    
 def obj_hazard(mtx):
     
     
@@ -159,6 +168,7 @@ def numberize(safe_mtx):
 def output_pgm(safe_mtx):
     pfunc = np.vectorize(safe_to_pval)
     result =  pfunc(safe_mtx)
+    result = black_bars(result)
     return result.repeat(2,axis=0).repeat(2,axis=1).flatten()
 
 def classify(mtx):
@@ -171,7 +181,15 @@ def detect(mtx):
     slopes = safe_slope_mtx(mtx)
     puncs = safe_punc_mtx(mtx)
     safe = np.logical_and(slopes,puncs)
-    return output_pgm(safe)
+    return np.transpose(output_pgm(safe))
+
+def detect_with_thresh(mtx, thresh):
+    new_mtx = erase_dots(mtx, thresh)
+    slopes = safe_slope_mtx(new_mtx)
+    puncs = safe_punc_mtx(new_mtx)
+    safe = np.logical_and(slopes,puncs)
+    return np.transpose(output_pgm(safe))
+
 
 def test_detect(mtx):
     safe = safe_slope_mtx(mtx)
