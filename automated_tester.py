@@ -38,7 +38,7 @@ def test_site3():
 def test_site4():
     print "Testing for Set4!"
     dir_site = "resources/Set4/solution.pgm"
-    our_np_array = np.transpose(dt.detect(dt.surf4))
+    our_np_array = dt.detect(dt.surf4)
     their_np_array = io.read_pgm(dir_site)
     
     testing(our_np_array, their_np_array)
@@ -63,11 +63,11 @@ def testing(our_np_array, their_np_array):
     print "Time: %10.10f\n\n" % (b-a)
 
 def find_thresh():
-    for i in np.arange(0, 2, 0.1):
+    for i in np.arange(0.4, 0.6, 0.01):
         print "Testing for %f" % (i)
 
-        dir_site = "resources/Set2/solution.pgm"
-        our_np_array = dt.detect(dt.surf4, i)
+        dir_site = "resources/Set3/solution.pgm"
+        our_np_array = dt.detect_with_thresh(dt.surf3, i)
         their_np_array = io.read_pgm(dir_site)
     
         testing(our_np_array, their_np_array)

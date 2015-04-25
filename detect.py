@@ -161,9 +161,13 @@ def output_pgm(safe_mtx):
     return result.repeat(2,axis=0).repeat(2,axis=1).flatten()
     
 
-def detect(mtx, thresh):
+def detect(mtx):
+    safe = safe_slope_mtx(mtx)
+    return np.transpose(output_pgm(safe))
+
+def detect_with_thresh(mtx, thresh):
     safe = safe_slope_mtx(erase_dots(mtx, thresh))
-    return output_pgm(safe)
+    return np.transpose(output_pgm(safe))
     
 M = np.array([[1, 2, 3, 4],
               [2, 3, 4, 5],
@@ -185,7 +189,7 @@ def flt(array):
 #     print "(%d %d)" % (x,y),
 #     it.iternext()
 def top_kek(mtx):
-    output = generic_filter(mtx,window_slope,17,mode='constant')
+    output = generic_filter(mtx,window_slope,17,mode='constant', cval=0)
     return output
 
 derp = [True for _ in range(50)]
