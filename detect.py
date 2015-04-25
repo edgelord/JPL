@@ -54,40 +54,23 @@ def pix_norm(mtx, pixel):
 
 def circle_mask(N):
     max_d = ((N-1)//2)**2
-    return [[True if ((x-N//2)**2+(y-N//2)**2) > max_d else 1 for x in range(N)]
+    return [[True if ((x-N//2)**2+(y-N//2)**2) > max_d else False for x in range(N)]
             for y in range(N)]
 
 def surf_grad(mtx):
     x_grad, y_grad = np.gradient(mtx)
     return x_grad + y_grad
     
-def find_bumps(mtx):
-    grad_mtx = surf_grad(mtx)
-    iter = np.nditer(grad_mtx, flags=['multi_index'])
-    bumps = []
-    while len(bumps)<10 and (not iter.finished):
-        if iter.value <= .0005:
-            x, y = iter.multi_index
-            bumps.append((x,y,iter.value))
-            iter.iternext()
-    return bumps
 
 zmat = np.array ([[0 for _ in range(500)] for _ in range(500)])
-def detect_bumps(mtx):
+
+def bump_safe_mtx(mtx):
     resids = mtx - gaussian_filter(mtx,5)
-    bumps = resids
     bumps = np.maximum(resids,zmat)
-    plt.contourf(bumps)
-    plt.show()
-    return resids
-    
-def view_bumps(mtx):
-    bumps = find_bumps(mtx)
-#   while not it.finished:
-#     # print "%d <%s>" % (it[0], it.multi_index),
-#     x, y = it.multi_index
-#     print "(%d %d)" % (x,y),
-#     it.iternext()
+    t_mat = np.vectorize(lambda x: x<.25)(bumps)
+
+
+    return t_mat
 
     
 def obj_hazard(mtx):
@@ -126,15 +109,13 @@ def window_slope(window):
     n = (n1+n2)/2
     # n = (n + n_)/2
     ang = py_ang(n,[0,0,1])*180/math.pi
-    if ang>90:
+    if ang > 90:
         ang = 180 - ang
-    if ang < 10:
-        return 255
-    return 0
+    return ang < 10
 
 def safe_slope_mtx(surf_mtx):
     # The max derivative that is within a 10 degree incline
-    max_d = 0.1763269807
+    max_d = 0.2863269807
 
     rows, cols = surf_mtx.shape
     max_mtx = np.array([[max_d for _ in xrange(rows)] for _ in xrange(cols)])
@@ -188,3 +169,17 @@ def top_kek(mtx):
     output = generic_filter(mtx,window_slope,17,mode='constant')
     return output
 
+derp = [True for _ in range(50)]
+for i, x in enumerate(derp):
+    if not i % 5:
+        derp[i-3:i] = [False,False,False,False]
+np.fromstring
+
+def view(mtx):
+    plt.contourf(mtx)
+    plt.show()
+
+def viewT(mtx):
+    omtx = output_pgm(mtx)
+    plt.contourf(omtx)
+    plt.show()
