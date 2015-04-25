@@ -168,7 +168,6 @@ def flt(array):
 def top_kek(mtx):
     output = generic_filter(mtx,window_slope,17,mode='constant')
     return output
-<<<<<<< HEAD
 
 derp = [True for _ in range(50)]
 for i, x in enumerate(derp):
@@ -184,5 +183,3 @@ def viewT(mtx):
     omtx = output_pgm(mtx)
     plt.contourf(omtx)
     plt.show()
-=======
->>>>>>> 5a918f6cf90d2f41007d9094d44c094338fba396
