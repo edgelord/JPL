@@ -6,7 +6,7 @@ from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 import math 
 
-resource_dir = "../resources/"
+resource_dir = "resources/"
 data = resource_dir+"dem.dat"
 
 # todo figure out norms relative to flat plane
@@ -17,10 +17,10 @@ def load_file(file_name):
         array = np.flipud(np.reshape(array,(500,500)))
         return array
 
-surf1 = load_file("../resources/roughness.raw")
-surf2 = load_file("../resources/slope_rough.raw")
-surf3 = load_file("../resources/slope_rough_crater.raw")
-surf4 = load_file("../resources/slope_rough_increased.raw")
+surf1 = load_file("resources/Set1/surface.raw")
+surf2 = load_file("resources/Set2/surface.raw")
+surf3 = load_file("resources/Set3/surface.raw")
+surf4 = load_file("resources/Set4/surface.raw")
 
 def py_ang(v1, v2):
     """ Returns the angle in radians between vectors 'v1' and 'v2'    """
@@ -82,7 +82,7 @@ def detect_bumps(mtx):
     
 def view_bumps(mtx):
     bumps = find_bumps(mtx)
-# while not it.finished:
+#   while not it.finished:
 #     # print "%d <%s>" % (it[0], it.multi_index),
 #     x, y = it.multi_index
 #     print "(%d %d)" % (x,y),
