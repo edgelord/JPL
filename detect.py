@@ -117,6 +117,7 @@ def safe_slope_mtx(surf_mtx):
     # The max derivative that is within a 10 degree incline
     max_d = 0.2863269807
 
+    surf_mtx = gaussian_filter(surf_mtx,2.1)
     rows, cols = surf_mtx.shape
     max_mtx = np.array([[max_d for _ in xrange(rows)] for _ in xrange(cols)])
     min_mtx = -max_mtx
@@ -148,7 +149,7 @@ def output_pgm(safe_mtx):
 
 def detect(mtx):
     safe = safe_slope_mtx(mtx)
-    return output_pgm(safe).flatten()
+    return output_pgm(safe)
     
 M = np.array([[1, 2, 3, 4],
               [2, 3, 4, 5],
