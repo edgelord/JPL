@@ -15,8 +15,8 @@ def load_file(file_name):
     with open(file_name, "rb") as f:
         array = np.fromfile(f, np.float32)
         array.byteswap(True)
-        array = np.flipud(np.reshape(array,(500,500)))
-        return array
+        # array = np.flipud(np.reshape(array,(500,500)))
+        return array.reshape(500,500)
 
 surf1 = load_file("resources/Set1/surface.raw")
 surf2 = load_file("resources/Set2/surface.raw")
