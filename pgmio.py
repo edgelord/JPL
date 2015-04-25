@@ -31,13 +31,8 @@ def read_pgm(file_directory=None):
     f.readline()
     f.readline()
     # Next f.readline() will the numbers
-    a = "[" + f.readline()
-    a = a.replace("\xff", "255,")
-    a = a.replace("\x00", "0,")
-    a = a.rstrip(",")
-    a += "]"
-    
+    a = np.fromstring(f.readline(), dtype=np.uint8)
     f.close()
-    return np.array(eval(a))
+    return a
 
 

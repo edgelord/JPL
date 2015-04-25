@@ -187,4 +187,3 @@ def flt(array):
 def top_kek(mtx):
     output = generic_filter(mtx,window_slope,17,mode='constant')
     return output
-
