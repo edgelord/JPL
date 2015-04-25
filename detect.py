@@ -143,7 +143,7 @@ def safe_to_pval(safe):
 def output_pgm(safe_mtx):
     pfunc = np.vectorize(safe_to_pval)
     result =  pfunc(safe_mtx)
-    return result.repeat(2,axis=0).repeat(2,axis=1)
+    return result.repeat(2,axis=0).repeat(2,axis=1).flatten()
     
 
 def detect(mtx):
