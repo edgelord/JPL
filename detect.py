@@ -111,7 +111,7 @@ def window_slope(window):
     ang = py_ang(n,[0,0,1])*180/math.pi
     if ang > 90:
         ang = 180 - ang
-    return ang < 10
+        return ang < 10
 
 def safe_slope_mtx(surf_mtx):
     # The max derivative that is within a 10 degree incline
@@ -142,14 +142,18 @@ def safe_to_pval(safe):
 
 def output_pgm(safe_mtx):
     pfunc = np.vectorize(safe_to_pval)
-    return pfunc(safe_mtx)
+    result =  pfunc(safe_mtx)
+    return result.repeat(2,axis=0).repeat(2,axis=1)
     
 
-M = [[1, 2, 3, 4],
-     [2, 3, 4, 5],
-     [4 ,6 , 8,10],
-     [11,12,13,15],
-     [7, 7, 7,  7]]
+def detect(mtx):
+    safe = safe_slope_mtx(mtx)
+    return output_pgm(safe)
+    
+M = np.array([[1, 2, 3, 4],
+              [2, 3, 4, 5],
+              [4 ,6 , 8,10],
+              [11,12,13,15]])
 
 
 T = np.array([[_*2 for _ in range(50)] for _ in range(50)])
@@ -173,7 +177,7 @@ derp = [True for _ in range(50)]
 for i, x in enumerate(derp):
     if not i % 5:
         derp[i-3:i] = [False,False,False,False]
-np.fromstring
+        np.fromstring
 
 def view(mtx):
     plt.contourf(mtx)
