@@ -72,6 +72,20 @@ def bump_safe_mtx(mtx):
 
     return t_mat
 
+def erase_dots(surf_mtx, threshold):
+    compare = np.vectorize(quick_compare)
+    return compare(surf_mtx,
+                   gaussian_filter(surf_mtx, 5),
+                   threshold)
+
+    
+    
+def quick_compare(surf_mtx, filtered_mtx, thresh):
+    if abs(surf_mtx - filtered_mtx) < thresh:
+        return filtered_mtx
+    else:
+        return surf_mtx
+    
     
 def obj_hazard(mtx):
     
@@ -147,8 +161,8 @@ def output_pgm(safe_mtx):
     return result.repeat(2,axis=0).repeat(2,axis=1).flatten()
     
 
-def detect(mtx):
-    safe = safe_slope_mtx(mtx)
+def detect(mtx, thresh):
+    safe = safe_slope_mtx(erase_dots(mtx, thresh))
     return output_pgm(safe)
     
 M = np.array([[1, 2, 3, 4],

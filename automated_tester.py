@@ -60,7 +60,22 @@ def testing(our_np_array, their_np_array):
     print "You have an accuracy of %10.4f%%" % (float(count)/float(total) * 100)
 
     b = time.time()
-    print "Time: %10.10f" % (b-a)
+    print "Time: %10.10f\n\n" % (b-a)
+
+def find_thresh():
+    for i in np.arange(0, 2, 0.1):
+        print "Testing for %f" % (i)
+
+        dir_site = "resources/Set2/solution.pgm"
+        our_np_array = dt.detect(dt.surf4, i)
+        their_np_array = io.read_pgm(dir_site)
+    
+        testing(our_np_array, their_np_array)
+
+        filename = "results/test4_our_%f.pgm" % (i)
+
+        io.write_pgm(our_np_array, filename)
+        io.write_pgm(their_np_array, "results/test4_their.pgm")
 
 if __name__ == '__main__':
     # Only available for judge presentation
