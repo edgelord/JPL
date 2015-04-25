@@ -5,7 +5,7 @@ from scipy.ndimage import generic_filter
 from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 import math 
-import array
+
 
 resource_dir = "resources/"
 data = resource_dir+"dem.dat"
@@ -72,6 +72,18 @@ def bump_safe_mtx(mtx):
 
     return t_mat
 
+def erase_dots(surf_mtx, threshold):
+    compare = np.vectorize(quick_compare)
+    return compare(surf_mtx,
+                   gaussian_filter(surf_mtx, 5),
+                   threshold)
+    
+def quick_compare(surf_mtx, filtered_mtx, thresh):
+    if abs(surf_mtx - filtered_mtx) < thresh:
+        return filtered_mtx
+    else:
+        return surf_mtx
+    
 def obj_hazard(mtx):
     
     
@@ -161,6 +173,19 @@ def detect(mtx):
     safe = np.logical_and(slopes,puncs)
     return output_pgm(safe)
 
+def test_detect(mtx):
+    safe = safe_slope_mtx(mtx)
+    return np.transpose(output_pgm(safe))
+
+def test_detect_with_thresh(mtx, thresh):
+    safe = safe_slope_mtx(erase_dots(mtx, thresh))
+    return np.transpose(output_pgm(safe))
+    
+M = np.array([[1, 2, 3, 4],
+              [2, 3, 4, 5],
+              [4 ,6 , 8,10],
+              [11,12,13,15]])
+
 def safe_punc_mtx(mtx):
     bump_mtx = bump_safe_mtx(mtx)
     size = 9
@@ -204,7 +229,7 @@ def flt(array):
 #     print "(%d %d)" % (x,y),
 #     it.iternext()
 def top_kek(mtx):
-    output = generic_filter(mtx,window_slope,17,mode='constant')
+    output = generic_filter(mtx,window_slope,17,mode='constant', cval=0)
     return output
 
 derp = [True for _ in range(50)]
