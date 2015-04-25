@@ -54,8 +54,9 @@ def pix_norm(mtx, pixel):
 
 def circle_mask(N):
     max_d = ((N-1)//2)**2
-    return [[True if ((x-N//2)**2+(y-N//2)**2) > max_d else False for x in range(N)]
-            for y in range(N)]
+    return np.array([[True if ((x-N//2)**2+(y-N//2)**2)
+                      < max_d else False for x in range(N)]
+             for y in range(N)])
 
 def surf_grad(mtx):
     x_grad, y_grad = np.gradient(mtx)
@@ -67,12 +68,10 @@ zmat = np.array ([[0 for _ in range(500)] for _ in range(500)])
 def bump_safe_mtx(mtx):
     resids = mtx - gaussian_filter(mtx,5)
     bumps = np.maximum(resids,zmat)
-    t_mat = np.vectorize(lambda x: x<.25)(bumps)
-
+    t_mat = np.vectorize(lambda x: x>.35)(bumps)
 
     return t_mat
 
-    
 def obj_hazard(mtx):
     
     
@@ -115,7 +114,7 @@ def window_slope(window):
 
 def safe_slope_mtx(surf_mtx):
     # The max derivative that is within a 10 degree incline
-    max_d = 0.2863269807
+    max_d = 0.2963269807
 
     surf_mtx = gaussian_filter(surf_mtx,2.1)
     rows, cols = surf_mtx.shape
@@ -135,27 +134,61 @@ def safe_slope_mtx(surf_mtx):
 
     return safe_pts
 
-
 def safe_to_pval(safe):
     if safe:
         return 255
     else: return 0
 
+def numberize(safe_mtx):
+    pfunc = np.vectorize(safe_to_pval)
+    result =  pfunc(safe_mtx)
+    return result
+
 def output_pgm(safe_mtx):
     pfunc = np.vectorize(safe_to_pval)
     result =  pfunc(safe_mtx)
     return result.repeat(2,axis=0).repeat(2,axis=1).flatten()
-    
+
+def classify(mtx):
+    slopes = safe_slope_mtx(mtx)
+    puncs = safe_punc_mtx(mtx)
+    safe = np.logical_and(slopes,puncs)
+    return safe
 
 def detect(mtx):
-    safe = safe_slope_mtx(mtx)
+    slopes = safe_slope_mtx(mtx)
+    puncs = safe_punc_mtx(mtx)
+    safe = np.logical_and(slopes,puncs)
     return output_pgm(safe)
-    
-M = np.array([[1, 2, 3, 4],
-              [2, 3, 4, 5],
-              [4 ,6 , 8,10],
-              [11,12,13,15]])
 
+def safe_punc_mtx(mtx):
+    bump_mtx = bump_safe_mtx(mtx)
+    size = 9
+    cm = circle_mask(size*2+1)
+    rows, cols = mtx.shape
+
+    clear = np.array([[False for _ in range (size*2+1)] for _ in range (size*2+1)])
+    masks = np.array([[True for _ in range (rows)] for _ in range (cols)])
+    for x, line in enumerate(bump_mtx):
+        for y, bump in enumerate(line):
+            if bump and x+size<rows and x-size >0 and y + size < rows and y-size > 0:
+                window = bump_mtx[x-size:x+size+1,y-size:y+size+1]
+                masked = mask_block(window,cm)
+                # masks[x-size:x+size+1,y-size:y+size+1] = cm
+                update= np.logical_and(masks[x+size:x+size+1,y-size:y+size+1],masked)
+                masks[x-size:x+size+1,y-size:y+size+1] = update
+                bump_mtx[x-size:x+size+1,y-size:y+size+1] = clear
+                # np.logical_and(bump_mtx[x-15:x+16,
+                #                         y-15:y+16],
+                #                cm)
+
+            
+    return masks
+def mask_at_index (mtx,index):
+    x, y = index
+    
+def mask_block(block,mask):
+    return np.logical_and(block,mask)
 
 T = np.array([[_*2 for _ in range(50)] for _ in range(50)])
 
@@ -181,10 +214,14 @@ for i, x in enumerate(derp):
         np.fromstring
 
 def view(mtx):
-    plt.contourf(mtx)
+    plt.contourf(np.flipud(mtx))
     plt.show()
 
 def viewT(mtx):
-    omtx = output_pgm(mtx)
+    plt.contourf(numberize(mtx))
+    plt.show()
+
+def viewPGM(mtx):
+    omtx = output_pgm(mtx).reshape(1000,1000)
     plt.contourf(omtx)
     plt.show()
