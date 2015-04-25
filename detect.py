@@ -148,7 +148,7 @@ def output_pgm(safe_mtx):
 
 def detect(mtx):
     safe = safe_slope_mtx(mtx)
-    return output_pgm(safe)
+    return output_pgm(safe).flatten()
     
 M = np.array([[1, 2, 3, 4],
               [2, 3, 4, 5],
