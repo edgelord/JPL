@@ -5,7 +5,7 @@ from scipy.ndimage import generic_filter
 from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 import math 
-import array
+
 
 resource_dir = "resources/"
 data = resource_dir+"dem.dat"

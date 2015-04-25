@@ -1,6 +1,7 @@
 import detect as dt
 import pgmio as io
 import time
+import numpy as np
 
 
 def test_site1():
@@ -37,7 +38,7 @@ def test_site3():
 def test_site4():
     print "Testing for Set4!"
     dir_site = "resources/Set4/solution.pgm"
-    our_np_array = dt.detect(dt.surf4)
+    our_np_array = np.transpose(dt.detect(dt.surf4))
     their_np_array = io.read_pgm(dir_site)
     
     testing(our_np_array, their_np_array)
