@@ -5,6 +5,7 @@ from scipy.ndimage import generic_filter
 from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 import math 
+import array
 
 resource_dir = "resources/"
 data = resource_dir+"dem.dat"
@@ -187,3 +188,14 @@ def top_kek(mtx):
     output = generic_filter(mtx,window_slope,17,mode='constant')
     return output
 
+
+def write_pgm(numpyarray, file_directory="results/unnamed.pgm"):
+    f = open(file_directory, "wb")
+    pgmheader = "P5\n" + str(1000) + '  ' + str(1000) + '  ' + str(255) + '\n'
+
+    f.write(pgmheader)
+    _buffer = array.array("B")
+    _buffer.extend(numpyarray.flatten())
+
+    _buffer.tofile(f)
+    f.close()
